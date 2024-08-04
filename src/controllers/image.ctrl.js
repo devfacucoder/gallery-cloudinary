@@ -31,7 +31,42 @@ const uploadImage = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+const uploadMultipleImages = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
+    const uploadPromises = req.files.map(file => {
+      return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream((error, result) => {
+          if (error) {
+            return reject(error);
+          }
+          resolve(result);
+        });
+
+        uploadStream.end(file.buffer);
+      });
+    });
+
+    const results = await Promise.all(uploadPromises);
+    
+    // Agregar las imágenes al array del usuario
+    results.forEach(result => {
+      user.imgs.push({ urlImg: result.secure_url, idImg: result.public_id });
+    });
+    
+    await user.save();
+
+    res.status(200).json(results);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 const deleteImage = async (req, res) => {
   try {
     const { id } = req.params;
@@ -61,4 +96,4 @@ const deleteImage = async (req, res) => {
 
 
 
-export { deleteImage, uploadImage,upload };
+export { deleteImage, uploadImage,upload,uploadMultipleImages };
