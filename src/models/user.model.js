@@ -13,6 +13,8 @@ const userSchema = new mongoose.Schema({
     unique: true,
     type: String,
   },
+  isVerified: { type: Boolean, default: false },
+  codeVerify: { type: String },
   imgs: [
     {
       urlImg: String,
@@ -20,6 +22,12 @@ const userSchema = new mongoose.Schema({
     },
   ],
 });
+
+userSchema.statics.generateVerificationCode = function() {
+  const min = 100000; // Mínimo número de 7 cifras
+  const max = 999999; // Máximo número de 7 cifras
+  return String(Math.floor(Math.random() * (max - min + 1)) + min);
+};
 userSchema.statics.enCryptPassword = async (password) => {
   const salt = await bcrypt.genSalt(10);
   return await bcrypt.hash(password, salt);
