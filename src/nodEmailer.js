@@ -1,13 +1,12 @@
 import nodemailer from 'nodemailer';
-import dotenv from 'dotenv';
-dotenv.config()
+import config from './config.js';
 export const transport = nodemailer.createTransport({
     host:"smtp.gmail.com",
     port:587,
     secure:false,
     auth:{
-        user:process.env.USEREMAELGOOGLE,
-        pass:process.env.PASSGOOGLEEMAIL
+        user:config.user_google,
+        pass:config.password_email
     }
 })
 transport.verify().then(()=>{
@@ -15,10 +14,3 @@ transport.verify().then(()=>{
 }).catch((err)=>{
     console.log(err)
 })
-/**await transport.sendMail({
-      from: 'Cloudinary app ', // sender address
-      to: newUserDBSave.email, // list of receivers
-      subject: "verificando email", // Subject line
-      text: "Hello world?", // plain text body
-      html: "<b>verifica tu email</b>", // html body
-    }); */

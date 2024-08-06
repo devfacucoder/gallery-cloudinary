@@ -1,7 +1,6 @@
 import userModel from "../models/user.model.js";
 import { transport } from "../nodEmailer.js";
-import dotenv from "dotenv";
-dotenv.config();
+import config from '../config.js'
 import jwt from "jsonwebtoken";
 const singUp = async (req, res) => {
   try {
@@ -24,7 +23,7 @@ const singUp = async (req, res) => {
       html: `<h1>CloudImagenes tu codigo de verificacion es: ${newUserDBSave.codeVerify}</h1>`, // html body
     });
 
-    const token = jwt.sign({ id: newUserDBSave._id }, process.env.SECRETJWT, {
+    const token = jwt.sign({ id: newUserDBSave._id }, config.secret_jwt, {
       expiresIn: 86400, // 24 hours
     });
 
@@ -47,7 +46,7 @@ const singIn = async (req, res) => {
       return res.status(400).json({ message: "user or password incorrect" });
     }
 
-    const token = jwt.sign({ id: userFound._id }, process.env.SECRETJWT, {
+    const token = jwt.sign({ id: userFound._id }, config.secret_jwt, {
       expiresIn: 86400, //24 hours
     });
 

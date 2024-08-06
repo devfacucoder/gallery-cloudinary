@@ -1,9 +1,7 @@
 import mongoose from "mongoose";
-import dotenv from "dotenv";
+import config from './config.js';
 
-dotenv.config();
-
-mongoose.connect(process.env.URLMONGODB)
+mongoose.connect(config.url_mongodb)
 .then(()=>{
     console.log("mongodb conectad")
 })
