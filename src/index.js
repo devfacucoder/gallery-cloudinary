@@ -1,6 +1,6 @@
 import app from "./app.js"
 const PORT = 5000 || process.env.PORT;
-import mongoose from "./db.js";
+import mongoose from "./libs/db.js";
 
 
 

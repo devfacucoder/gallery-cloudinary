@@ -1,5 +1,5 @@
 import userModel from "../models/user.model.js";
-import cloudinary from "../cloudinary.js";
+import cloudinary from "../libs/cloudinary.js";
 import multer from "multer";
 
 const storage = multer.memoryStorage();

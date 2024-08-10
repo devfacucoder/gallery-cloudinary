@@ -1,6 +1,6 @@
 import userModel from "../models/user.model.js";
 import roleModel from "../models/roles.model.js";
-import { transport } from "../nodEmailer.js";
+import { transport } from "../libs/nodEmailer.js";
 import config from "../config.js";
 import jwt from "jsonwebtoken";
 const singUp = async (req, res) => {

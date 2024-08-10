@@ -1,6 +1,6 @@
 import userModel from "../models/user.model.js";
 import roleModel from "../models/roles.model.js";
-import cloudinary from "../cloudinary.js";
+import cloudinary from "../libs/cloudinary.js";
 
 import jwt from "jsonwebtoken";
 
@@ -43,10 +43,10 @@ export const createUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
   try {
-    const { userId } = req.params;
+    
 
     // Busca al usuario por ID
-    const user = await userModel.findById(userId);
+    const user = await userModel.findById(req.userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -57,7 +57,7 @@ export const deleteUser = async (req, res) => {
     }
 
     // Elimina el usuario de la base de datos
-    await userModel.findByIdAndDelete(userId);
+    await userModel.findByIdAndDelete(req.userId);
 
     res
       .status(200)
@@ -70,8 +70,8 @@ export const deleteUser = async (req, res) => {
 export const updateUser = async (req,res) => {
  
   try {
-    
-    const userDB = await userModel.findByIdAndUpdate(req.params.idUpdate,req.body,{
+
+    const userDB = await userModel.findByIdAndUpdate(req,userId.idUpdate,req.body,{
       new:true
     })  
     res.status(200).json(userDB)

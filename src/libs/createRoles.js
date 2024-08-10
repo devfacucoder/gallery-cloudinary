@@ -1,4 +1,4 @@
-import roleModel from "./models/roles.model.js";
+import roleModel from "../models/roles.model.js";
 /**
  *
  * esta funcion es para crear roles de users,
