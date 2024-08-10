@@ -1,9 +1,10 @@
 import userModel from "../models/user.model.js";
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
 import roleModel from "../models/roles.model.js";
-dotenv.config();
-const getUsers = async (req, res) => {
+import cloudinary from "../cloudinary.js";
+
+import jwt from "jsonwebtoken";
+
+export const getUsers = async (req, res) => {
   try {
     const users = await userModel.find();
     res.status(200).json(users);
@@ -11,7 +12,7 @@ const getUsers = async (req, res) => {
     console.log(error);
   }
 };
-const createUser = async (req, res) => {
+export const createUser = async (req, res) => {
   try {
     const { nickname, email, password, rol } = req.body;
 
@@ -40,4 +41,43 @@ const createUser = async (req, res) => {
   }
 };
 
-export { getUsers, createUser };
+export const deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Busca al usuario por ID
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Elimina todas las imágenes de Cloudinary
+    for (const image of user.imgs) {
+      await cloudinary.uploader.destroy(image.idImg);
+    }
+
+    // Elimina el usuario de la base de datos
+    await userModel.findByIdAndDelete(userId);
+
+    res
+      .status(200)
+      .json({ message: "User and all images deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error deleting the user and images" });
+  }
+};
+export const updateUser = async (req,res) => {
+ 
+  try {
+    
+    const userDB = await userModel.findByIdAndUpdate(req.params.idUpdate,req.body,{
+      new:true
+    })  
+    res.status(200).json(userDB)
+
+  } catch (error) {
+    console.log(error)
+    res.status(400).json(error)
+  }
+}
