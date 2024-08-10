@@ -1,6 +1,7 @@
 import userModel from "../models/user.model.js";
+import roleModel from "../models/roles.model.js";
 import { transport } from "../nodEmailer.js";
-import config from '../config.js'
+import config from "../config.js";
 import jwt from "jsonwebtoken";
 const singUp = async (req, res) => {
   try {
@@ -9,6 +10,7 @@ const singUp = async (req, res) => {
       nickname,
       email,
       password: await userModel.enCryptPassword(password),
+      rol: await roleModel.findOne({ name: "user" }),
       codeVerify: await userModel.generateVerificationCode(),
     });
 
@@ -63,7 +65,7 @@ const verifyEmail = async (req, res) => {
     if (!(userDB.codeVerify === code)) {
       return res.status(405).json({ mensage: "codigo incorrecto" });
     }
-    userDB.isVerified = true
+    userDB.isVerified = true;
     await userDB.save();
     res.status(201).json({ message: "Email verificado" });
   } catch (error) {
@@ -71,4 +73,4 @@ const verifyEmail = async (req, res) => {
   }
 };
 
-export { singUp, singIn,verifyEmail };
+export { singUp, singIn, verifyEmail };

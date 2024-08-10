@@ -1,10 +1,11 @@
 import express from "express";
 const app = express();
-
+import { createRoles } from "./createRoles.js";
 import userRoutes from "./routes/user.routes.js";
 import imageRouter from "./routes/image.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import cors from "cors";
+createRoles()
 app.use(cors());
 app.use(express.json());
 app.use("/api/users", userRoutes);

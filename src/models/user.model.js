@@ -1,9 +1,11 @@
-import mongoose, { model } from "mongoose";
+import mongoose, { model, Types } from "mongoose";
 import bcrypt from "bcryptjs";
 const userSchema = new mongoose.Schema({
   nickname: {
     unique: true,
     type: String,
+    required: true,
+
   },
   password: {
     type: String,
@@ -12,9 +14,12 @@ const userSchema = new mongoose.Schema({
   email: {
     unique: true,
     type: String,
+    required: true,
+
   },
   isVerified: { type: Boolean, default: false },
   codeVerify: { type: String },
+  rol: { type: Types.ObjectId, ref: "role" },
   imgs: [
     {
       urlImg: String,

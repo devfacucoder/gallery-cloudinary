@@ -69,28 +69,32 @@ const uploadMultipleImages = async (req, res) => {
 };
 const deleteImage = async (req, res) => {
   try {
-    const { id } = req.params;
-    const userId = req.userId;
+    const { userId, imageId } = req.params;
 
-    // Eliminar la imagen de Cloudinary
-    const result = await cloudinary.uploader.destroy(id);
-    if (result.result !== 'ok') {
-      return res.status(400).json({ message: "Error deleting image from Cloudinary", error: result });
-    }
-
-    // Eliminar la imagen del array de imágenes del usuario
-    const user = await userModel.findById(userId);
+    // Busca al usuario por ID
+    const user = await userModel.findById(req.userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    user.imgs = user.imgs.filter(img => img.idImg !== id);
+    // Busca la imagen en el array imgs del usuario
+    const image = user.imgs.find(img => img.idImg === imageId);
+    if (!image) {
+      return res.status(403).json({ message: "Image not found or not authorized to delete this image" });
+    }
+
+    // Si la imagen pertenece al usuario, procede a eliminarla
+    // Si usas Cloudinary, elimina la imagen de Cloudinary
+    await cloudinary.uploader.destroy(image.idImg);
+
+    // Elimina la imagen del array imgs en el userModel
+    user.imgs = user.imgs.filter(img => img.idImg !== imageId);
     await user.save();
 
     res.status(200).json({ message: "Image deleted successfully" });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Server error" });
+    console.error(error);
+    res.status(500).json({ message: "Error deleting the image" });
   }
 };
 

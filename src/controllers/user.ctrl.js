@@ -1,7 +1,8 @@
 import userModel from "../models/user.model.js";
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-dotenv.config()
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import roleModel from "../models/roles.model.js";
+dotenv.config();
 const getUsers = async (req, res) => {
   try {
     const users = await userModel.find();
@@ -12,8 +13,8 @@ const getUsers = async (req, res) => {
 };
 const createUser = async (req, res) => {
   try {
-    const { nickname, email, password } = req.body;
-    
+    const { nickname, email, password, rol } = req.body;
+
     // Verificar si el email ya existe
     const userExists = await userModel.findOne({ email });
     if (userExists) {
@@ -23,11 +24,14 @@ const createUser = async (req, res) => {
     const newUser = new userModel({
       nickname,
       email,
+      rol: await roleModel.findOne({ name: rol }),
       password: await userModel.enCryptPassword(password),
     });
-
     const userSave = await newUser.save();
-    const token = jwt.sign({ id: userSave._id }, process.env.SECRETJWT, { expiresIn: '1h' });
+    console.log(userSave);
+    const token = jwt.sign({ id: userSave._id }, process.env.SECRETJWT, {
+      expiresIn: "2d",
+    });
 
     res.status(201).json({ message: "Usuario creado", token });
   } catch (error) {
@@ -36,4 +40,4 @@ const createUser = async (req, res) => {
   }
 };
 
-export { getUsers,createUser };
+export { getUsers, createUser };
